@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Solana Wallet Analytics Dashboard
+
+A Next.js 15 application that lets users connect their Solana wallet to access an analytics dashboard for their own wallet or any Solana address they search for.
+
+## Features
+
+- **Authentication**: Connect Solana wallet and sign a message to verify ownership
+- **Transaction Activity**: GitHub-style activity grid showing daily transactions
+- **Portfolio View**: SOL balance with USD value and all SPL tokens
+- **Wallet Search**: Search for any Solana address and view its analytics
+
+## Tech Stack
+
+- Next.js 15 with App Router
+- TypeScript
+- Tailwind CSS for styling
+- @solana/web3.js for Solana blockchain interactions
+- @solana/wallet-adapter for wallet connections
+- TanStack Query (React Query) for data fetching
+- Framer Motion for animations
+- react-calendar-heatmap for GitHub-style activity grid
+- Recharts for data visualization
+
+## Design Choices
+
+### Architecture
+
+- **App Router**: Using Next.js App Router for better SEO and improved routing
+- **Server Components**: Leveraging React Server Components for improved performance
+- **Client Components**: Using Client Components for interactive elements
+- **API Routes**: Implementing API routes for data fetching and processing
+
+### State Management
+
+- **React Context**: For global state management (wallet connection)
+- **TanStack Query**: For data fetching, caching, and revalidation with advanced features like query invalidation and mutation handling
+
+### Authentication
+
+- **Wallet Adapter**: Using Solana Wallet Adapter for seamless wallet connections
+- **Message Signing**: Implementing message signing for wallet verification
+
+### UI/UX
+
+- **Dark Theme**: Sleek dark-themed UI optimized for data visualization
+- **Responsive Design**: Mobile-first approach with responsive layouts
+- **Loading States**: Skeleton loaders for better user experience
+- **Error Handling**: Comprehensive error states with user-friendly messages
+- **Animations**: Smooth transitions and animations with Framer Motion
 
 ## Getting Started
 
-First, run the development server:
+First, install the dependencies:
+
+```bash
+npm install
+# or
+yarn install
+```
+
+Then, run the development server:
 
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Challenges and Solutions
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Large Transaction Sets**: Implemented pagination and virtualized lists for efficient rendering
+- **Real-time Data**: Used TanStack Query for automatic revalidation of data with advanced caching
+- **Wallet Connection**: Handled various wallet providers and connection states
+- **Error Handling**: Implemented comprehensive error boundaries and fallbacks
 
-## Learn More
+## AI Assistance
 
-To learn more about Next.js, take a look at the following resources:
+This project was developed with assistance from AI tools for:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Initial project structure
+- Component architecture
+- API integration patterns
+- UI/UX design principles
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
+The application can be deployed on Vercel:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/yourusername/solana-wallet-dashboard)

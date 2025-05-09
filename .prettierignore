@@ -1,0 +1,21 @@
+# Ignore artifacts
+node_modules
+.next
+out
+build
+dist
+coverage
+.vercel
+.turbo
+
+# Ignore all HTML files
+*.html
+
+# Ignore package-lock
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Misc
+.DS_Store
+*.pem

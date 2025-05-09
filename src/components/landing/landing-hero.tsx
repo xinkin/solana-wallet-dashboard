@@ -16,7 +16,7 @@ export function LandingHero() {
   }, [connected, router]);
 
   return (
-    <div className="flex flex-col items-center justify-center text-center min-h-[80vh] max-w-5xl mx-auto px-6 py-16 md:py-24">
+    <div className="flex flex-col items-center justify-center text-center max-w-5xl mx-auto px-6 py-16 md:py-24">
       <div className="space-y-8 md:space-y-12">
         <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight">
           <span className="text-foreground">Wallet Analytics</span>

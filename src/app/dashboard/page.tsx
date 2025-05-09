@@ -3,17 +3,20 @@
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import { useAuth } from '@/components/providers/auth-provider';
 import { TransactionActivity } from '@/components/dashboard/transaction-activity';
 import { SolBalance } from '@/components/dashboard/sol-balance';
 import { PortfolioValue } from '@/components/dashboard/portfolio-value';
 
 export default function DashboardPage() {
-  const { connected, publicKey } = useWallet();
+  const { publicKey } = useWallet();
+  const { isAuthenticated } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const [walletAddress, setWalletAddress] = useState<string | undefined>();
 
+  // Set wallet address from URL param or connected wallet
   useEffect(() => {
     const addressParam = searchParams.get('address');
     if (addressParam) {
@@ -23,19 +26,22 @@ export default function DashboardPage() {
     }
   }, [publicKey, searchParams]);
 
+  // Update wallet address when viewing own dashboard
   useEffect(() => {
     if (publicKey && !searchParams.get('address') && pathname === '/dashboard') {
       setWalletAddress(publicKey.toString());
     }
   }, [publicKey, searchParams, pathname]);
 
+  // Redirect to home if not authenticated and not viewing a specific address
   useEffect(() => {
-    if (!connected && !searchParams.get('address')) {
+    if (!isAuthenticated && !searchParams.get('address')) {
       router.push('/');
     }
-  }, [connected, router, searchParams]);
+  }, [isAuthenticated, router, searchParams]);
 
-  if (!connected && !searchParams.get('address')) {
+  // Don't render anything while redirecting
+  if (!isAuthenticated && !searchParams.get('address')) {
     return null;
   }
 

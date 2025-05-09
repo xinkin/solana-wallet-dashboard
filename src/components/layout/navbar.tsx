@@ -1,12 +1,12 @@
 'use client';
 
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-import { useWallet } from '@solana/wallet-adapter-react';
 import { useState, useEffect, FormEvent } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { useAuth } from '@/components/providers/auth-provider';
 
 export function Navbar() {
-  const { connected } = useWallet();
+  const { isAuthenticated } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [windowWidth, setWindowWidth] = useState(0);
   const [walletAddress, setWalletAddress] = useState('');
@@ -58,7 +58,7 @@ export function Navbar() {
           </div>
 
           <div className="flex items-center space-x-3 sm:space-x-6">
-            {connected && (
+            {isAuthenticated && (
               <button
                 onClick={() => router.push('/dashboard')}
                 className="hidden sm:flex items-center justify-center text-sm font-medium px-4 py-2 rounded-full transition-all hover:bg-card hover:text-primary border border-border"
@@ -66,7 +66,7 @@ export function Navbar() {
                 My Dashboard
               </button>
             )}
-            {isDashboard && connected && (
+            {isDashboard && isAuthenticated && (
               <div className="relative">
                 {showSearch ? (
                   <form onSubmit={handleSearch} className="flex items-center">

@@ -2,18 +2,20 @@
 
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { useAuth } from '@/components/providers/auth-provider';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export function LandingHero() {
   const { connected } = useWallet();
+  const { isAuthenticated, signMessage, authError } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (connected) {
+    if (isAuthenticated) {
       router.push('/dashboard');
     }
-  }, [connected, router]);
+  }, [isAuthenticated, router]);
 
   return (
     <div className="flex flex-col items-center justify-center text-center max-w-5xl mx-auto px-6 py-16 md:py-24">
@@ -27,8 +29,32 @@ export function LandingHero() {
           history, portfolio balance, and token holdings.
         </p>
 
-        <div className="py-6">
-          <WalletMultiButton className="px-8 py-3 text-lg rounded-full" />
+        <div className="flex flex-col items-center space-y-4 py-6">
+          {!connected ? (
+            <div>
+              <WalletMultiButton className="px-8 py-3 text-lg rounded-full" />
+            </div>
+          ) : !isAuthenticated ? (
+            <div className="flex flex-col items-center space-y-4">
+              <button
+                onClick={signMessage}
+                className="bg-primary hover:bg-primary/90 text-white font-medium py-3 px-8 rounded-full transition-colors"
+              >
+                Sign Message to Authenticate
+              </button>
+              <p className="text-sm text-gray-400">
+                Please sign a message to verify wallet ownership
+              </p>
+              {authError && <p className="text-red-500 text-sm">{authError}</p>}
+            </div>
+          ) : (
+            <button
+              onClick={() => router.push('/dashboard')}
+              className="bg-primary hover:bg-primary/90 text-white font-medium py-3 px-8 rounded-full transition-colors"
+            >
+              Go to Dashboard
+            </button>
+          )}
         </div>
       </div>
 

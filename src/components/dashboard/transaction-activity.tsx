@@ -18,29 +18,29 @@ export function TransactionActivity({ walletAddress }: TransactionActivityProps)
   const today = new Date();
   const oneYearAgo = new Date(today);
   oneYearAgo.setFullYear(today.getFullYear() - 1);
-  
+
   // Sample data - would be replaced with actual transaction data from an API
   const [activityData] = useState<TransactionData[]>(() => {
     const data: TransactionData[] = [];
     const currentDate = new Date(oneYearAgo);
-    
+
     while (currentDate <= today) {
       // Generate random transaction count (more likely to be 0 than have transactions)
       const random = Math.random();
       let count = 0;
-      
+
       if (random > 0.7) {
         count = Math.floor(Math.random() * 10) + 1;
       }
-      
+
       data.push({
         date: format(currentDate, 'yyyy-MM-dd'),
-        count
+        count,
       });
-      
+
       currentDate.setDate(currentDate.getDate() + 1);
     }
-    
+
     return data;
   });
 
@@ -48,7 +48,7 @@ export function TransactionActivity({ walletAddress }: TransactionActivityProps)
     if (!value || value.count === 0) {
       return 'color-empty';
     }
-    
+
     if (value.count < 3) {
       return 'color-scale-1';
     } else if (value.count < 6) {
@@ -61,7 +61,7 @@ export function TransactionActivity({ walletAddress }: TransactionActivityProps)
   return (
     <div className="p-6 bg-card rounded-lg border border-border">
       <h2 className="text-xl font-medium text-primary mb-6">Transaction Activity</h2>
-      
+
       {walletAddress ? (
         <div>
           <CalendarHeatmap

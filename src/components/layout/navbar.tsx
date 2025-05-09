@@ -1,14 +1,19 @@
 'use client';
 
-// import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-// import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { useState, useEffect, FormEvent } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 
 export function Navbar() {
-  // const { connected } = useWallet();
+  const { connected } = useWallet();
   const [scrolled, setScrolled] = useState(false);
   const [windowWidth, setWindowWidth] = useState(0);
+  const [walletAddress, setWalletAddress] = useState('');
+  const [showSearch, setShowSearch] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+  const isDashboard = pathname === '/dashboard';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,7 +22,6 @@ export function Navbar() {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
     };
-
     handleResize();
 
     window.addEventListener('scroll', handleScroll);
@@ -28,6 +32,14 @@ export function Navbar() {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+
+  const handleSearch = (e: FormEvent) => {
+    e.preventDefault();
+    if (walletAddress.trim()) {
+      router.push(`/dashboard?address=${walletAddress}`);
+      setShowSearch(false);
+    }
+  };
 
   return (
     <>
@@ -40,19 +52,58 @@ export function Navbar() {
       >
         <div className="container mx-auto flex h-16 md:h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center">
-            <span className="text-lg sm:text-xl md:text-2xl font-bold ml-2">Solanalytics</span>
+            <span className="text-lg sm:text-xl md:text-2xl font-bold text-primary cursor-pointer">
+              Solanalytics
+            </span>
           </div>
+
           <div className="flex items-center space-x-3 sm:space-x-6">
-            {/* {connected && (
-              <Link
-                href="/dashboard"
-                className="hidden sm:inline-flex items-center justify-center text-sm font-medium px-4 py-2 rounded-full transition-all hover:bg-card hover:text-primary"
+            {connected && (
+              <button
+                onClick={() => router.push('/dashboard')}
+                className="hidden sm:flex items-center justify-center text-sm font-medium px-4 py-2 rounded-full transition-all hover:bg-card hover:text-primary border border-border"
               >
-                Dashboard
-              </Link>
-            )} */}
+                My Dashboard
+              </button>
+            )}
+            {isDashboard && connected && (
+              <div className="relative">
+                {showSearch ? (
+                  <form onSubmit={handleSearch} className="flex items-center">
+                    <input
+                      type="text"
+                      value={walletAddress}
+                      onChange={e => setWalletAddress(e.target.value)}
+                      placeholder="Enter wallet address"
+                      className="bg-card border border-border rounded-full py-2 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 w-[200px] md:w-[300px]"
+                    />
+                    <button
+                      type="submit"
+                      className="ml-2 bg-primary text-white rounded-full p-2 text-sm hover:bg-primary/90 transition-colors"
+                    >
+                      Search
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowSearch(false)}
+                      className="ml-2 bg-card text-gray-400 rounded-full p-2 text-sm hover:bg-card/90 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </form>
+                ) : (
+                  <button
+                    onClick={() => setShowSearch(true)}
+                    className="hidden sm:flex items-center justify-center text-sm font-medium px-4 py-2 rounded-full transition-all hover:bg-card hover:text-primary border border-border"
+                  >
+                    Search Wallet
+                  </button>
+                )}
+              </div>
+            )}
+
             <div className={windowWidth < 640 ? 'scale-90 origin-right' : ''}>
-              <WalletMultiButton className="rounded-full" />
+              <WalletMultiButton />
             </div>
           </div>
         </div>

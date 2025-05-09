@@ -1,63 +1,75 @@
 'use client';
 
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Navbar } from '@/components/layout/navbar';
+import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import { TransactionActivity } from '@/components/dashboard/transaction-activity';
+import { SolBalance } from '@/components/dashboard/sol-balance';
+import { PortfolioValue } from '@/components/dashboard/portfolio-value';
 
 export default function DashboardPage() {
-  const { connected } = useWallet();
+  const { connected, publicKey } = useWallet();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const [walletAddress, setWalletAddress] = useState<string | undefined>();
 
-  // Redirect to home if wallet is not connected
   useEffect(() => {
-    if (!connected) {
+    const addressParam = searchParams.get('address');
+    if (addressParam) {
+      setWalletAddress(addressParam);
+    } else if (publicKey) {
+      setWalletAddress(publicKey.toString());
+    }
+  }, [publicKey, searchParams]);
+
+  useEffect(() => {
+    if (publicKey && !searchParams.get('address') && pathname === '/dashboard') {
+      setWalletAddress(publicKey.toString());
+    }
+  }, [publicKey, searchParams, pathname]);
+
+  useEffect(() => {
+    if (!connected && !searchParams.get('address')) {
       router.push('/');
     }
-  }, [connected, router]);
+  }, [connected, router, searchParams]);
 
-  if (!connected) {
-    return null; // Don't render anything while redirecting
+  if (!connected && !searchParams.get('address')) {
+    return null;
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <main className="flex-1 container mx-auto px-4 py-8">
-        <div>
-          <h1 className="text-3xl font-bold mb-8">Wallet Dashboard</h1>
+    <div className="container mx-auto px-4 py-8">
+      <div>
+        <h1 className="text-3xl font-bold mb-8 text-primary">
+          {searchParams.get('address') && searchParams.get('address') !== publicKey?.toString()
+            ? 'Wallet Analytics'
+            : 'My Dashboard'}
+        </h1>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="col-span-3 p-6 bg-card rounded-lg border border-border">
-              <h2 className="text-xl font-semibold mb-4">Transaction Activity</h2>
-              <div className="h-64 flex items-center justify-center bg-accent/20 rounded-md">
-                <p className="text-gray-400">Transaction activity visualization will appear here</p>
-              </div>
+        {walletAddress &&
+          searchParams.get('address') &&
+          searchParams.get('address') !== publicKey?.toString() && (
+            <div className="mb-8 text-sm text-gray-400">
+              Viewing data for: <span className="font-mono">{walletAddress}</span>
             </div>
+          )}
 
-            <div className="p-6 bg-card rounded-lg border border-border">
-              <h2 className="text-xl font-semibold mb-4">SOL Balance</h2>
-              <div className="h-40 flex items-center justify-center bg-accent/20 rounded-md">
-                <p className="text-gray-400">SOL balance will appear here</p>
-              </div>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="col-span-3">
+            <TransactionActivity walletAddress={walletAddress} />
+          </div>
 
-            <div className="p-6 bg-card rounded-lg border border-border">
-              <h2 className="text-xl font-semibold mb-4">Portfolio Value</h2>
-              <div className="h-40 flex items-center justify-center bg-accent/20 rounded-md">
-                <p className="text-gray-400">Portfolio value will appear here</p>
-              </div>
-            </div>
+          <div className="h-full">
+            <SolBalance walletAddress={walletAddress} />
+          </div>
 
-            <div className="p-6 bg-card rounded-lg border border-border">
-              <h2 className="text-xl font-semibold mb-4">Wallet Search</h2>
-              <div className="h-40 flex items-center justify-center bg-accent/20 rounded-md">
-                <p className="text-gray-400">Wallet search will appear here</p>
-              </div>
-            </div>
+          <div className="col-span-2 h-full">
+            <PortfolioValue walletAddress={walletAddress} />
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

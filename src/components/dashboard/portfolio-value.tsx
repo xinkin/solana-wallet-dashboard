@@ -3,6 +3,7 @@
 import { usePortfolioValue, useSolBalance } from '@/hooks/useSolData';
 import { TokenData } from '@/types/solana';
 import { CreditCard, Coins, CircleDollarSign, FileX } from 'lucide-react';
+import Image from 'next/image';
 
 function renderSkeletonLoader() {
   return (
@@ -10,16 +11,16 @@ function renderSkeletonLoader() {
       <div className="h-10 w-48 bg-gray-700/50 rounded-lg"></div>
 
       <div className="grid grid-cols-2 gap-6">
-        <div className="p-4 bg-card/50 rounded-lg border border-border/50 h-20"></div>
-        <div className="p-4 bg-card/50 rounded-lg border border-border/50 h-20"></div>
+        <div className="p-4 bg-card/50 rounded-lg border-0 shadow-sm h-20"></div>
+        <div className="p-4 bg-card/50 rounded-lg border-0 shadow-sm h-20"></div>
       </div>
 
       <div className="h-6 w-full bg-gray-700/50 rounded mt-6"></div>
       <div className="h-6 w-full bg-gray-700/50 rounded mt-6"></div>
 
       <div className="space-y-4 mt-4">
-        <div className="p-4 bg-card/50 rounded-lg border border-border/50 h-16"></div>
-        <div className="p-4 bg-card/50 rounded-lg border border-border/50 h-16"></div>
+        <div className="p-4 bg-card/50 rounded-lg border-0 shadow-sm h-16"></div>
+        <div className="p-4 bg-card/50 rounded-lg border-0 shadow-sm h-16"></div>
       </div>
     </div>
   );
@@ -34,7 +35,7 @@ export function PortfolioValue({ walletAddress }: { walletAddress?: string }) {
   }
   if (error && !isLoading && !data) {
     return (
-      <div className="p-8 bg-card rounded-xl border border-border shadow-lg h-full">
+      <div className="p-8 bg-card rounded-xl border border-border/40 shadow-lg h-full">
         <div className="mb-6">
           <h2 className="text-2xl font-semibold text-primary">Portfolio Value</h2>
         </div>
@@ -54,7 +55,7 @@ export function PortfolioValue({ walletAddress }: { walletAddress?: string }) {
   }
 
   return (
-    <div className="p-8 bg-card rounded-xl border border-border shadow-lg h-full">
+    <div className="p-8 bg-card rounded-xl border border-border/40 shadow-lg h-full">
       <div className="mb-6">
         <h2 className="text-2xl font-semibold text-primary">Portfolio Value</h2>
       </div>
@@ -64,7 +65,7 @@ export function PortfolioValue({ walletAddress }: { walletAddress?: string }) {
           <div className="text-4xl font-bold mb-8">${data.totalValue.toFixed(2)}</div>
 
           <div className="mt-4 grid grid-cols-2 gap-6">
-            <div className="p-4 bg-gradient-to-br from-card/80 to-card/50 rounded-lg border border-border/50 shadow-sm hover:shadow-md transition-shadow duration-300">
+            <div className="p-4 bg-gradient-to-br from-card/80 to-card/50 rounded-lg border border-primary/20 shadow-sm hover:shadow-md transition-all duration-300">
               <div className="flex items-center mb-2">
                 <CircleDollarSign className="h-5 w-5 mr-2 text-primary/70" />
                 <p className="text-sm text-gray-400 font-medium">SOL Value</p>
@@ -76,7 +77,7 @@ export function PortfolioValue({ walletAddress }: { walletAddress?: string }) {
                 )}
               </div>
             </div>
-            <div className="p-4 bg-gradient-to-br from-card/80 to-card/50 rounded-lg border border-border/50 shadow-sm hover:shadow-md transition-shadow duration-300">
+            <div className="p-4 bg-gradient-to-br from-card/80 to-card/50 rounded-lg border border-primary/20 shadow-sm hover:shadow-md transition-all duration-300">
               <div className="flex items-center mb-2">
                 <CreditCard className="h-5 w-5 mr-2 text-primary/70" />
                 <p className="text-sm text-gray-400 font-medium">Token Value</p>
@@ -101,7 +102,7 @@ export function PortfolioValue({ walletAddress }: { walletAddress?: string }) {
                 {data.tokens.map((token: TokenData) => (
                   <div
                     key={token.mint}
-                    className="flex justify-between items-center p-4 bg-gradient-to-br from-card/80 to-card/50 rounded-lg border border-border/50 shadow-sm hover:shadow-md hover:bg-card/70 transition-all duration-300 hover:translate-x-1"
+                    className="flex justify-between items-center p-4 bg-gradient-to-br from-card/80 to-card/50 rounded-lg shadow-sm hover:shadow-md hover:bg-card/70 transition-all duration-300 hover:translate-x-1"
                   >
                     <div className="flex items-center">
                       {token.logo ? (
@@ -143,7 +144,7 @@ export function PortfolioValue({ walletAddress }: { walletAddress?: string }) {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8 bg-card/30 rounded-lg border border-border/50 shadow-inner">
+              <div className="text-center py-8 bg-card/30 rounded-lg border border-primary/20 shadow-inner">
                 <FileX className="h-12 w-12 mx-auto text-gray-500/50 mb-3" />
                 <p className="text-gray-400 font-medium">No tokens found</p>
               </div>

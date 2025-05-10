@@ -46,7 +46,7 @@ export function TransactionActivity({ walletAddress }: { walletAddress?: string 
 
   if (isLoading) {
     return (
-      <div className="p-6 bg-card rounded-lg border border-border">
+      <div className="p-6 bg-card rounded-lg border-0 shadow-md">
         <h2 className="text-xl font-medium text-primary mb-6">Transaction Activity</h2>
         <div className="animate-pulse h-40 bg-gray-700/20 rounded"></div>
       </div>
@@ -55,7 +55,7 @@ export function TransactionActivity({ walletAddress }: { walletAddress?: string 
 
   if (error) {
     return (
-      <div className="p-6 bg-card rounded-lg border border-border">
+      <div className="p-6 bg-card rounded-lg border-0 shadow-md">
         <h2 className="text-xl font-medium text-primary mb-6">Transaction Activity</h2>
         <div className="text-red-500">Failed to load transaction activity</div>
       </div>
@@ -63,7 +63,7 @@ export function TransactionActivity({ walletAddress }: { walletAddress?: string 
   }
 
   return (
-    <div className="p-8 bg-card rounded-xl border border-border shadow-lg">
+    <div className="p-8 bg-card rounded-xl border border-border/40 shadow-lg">
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-2xl font-semibold text-primary">Transaction Activity</h2>
         <span className="text-sm bg-primary/10 px-3 py-1 rounded-full text-primary font-medium">{yearRangeText}</span>
@@ -116,21 +116,21 @@ export function TransactionActivity({ walletAddress }: { walletAddress?: string 
           </div>
 
           <div className="grid grid-cols-3 gap-6 mt-8 mb-6 text-sm">
-            <div className="bg-gradient-to-br from-card/80 to-card/50 p-4 rounded-lg border border-border/50 shadow-sm hover:shadow-md transition-shadow duration-300">
+            <div className="bg-gradient-to-br from-card/80 to-card/50 p-4 rounded-lg border border-primary/20 shadow-sm hover:shadow-md transition-all duration-300">
               <div className="text-primary font-bold text-xl mb-1">{totalTransactions.toLocaleString()}</div>
               <div className="text-gray-400 flex items-center">
                 <Activity className="h-4 w-4 mr-1 text-primary/70" />
                 <span>Total Transactions</span>
               </div>
             </div>
-            <div className="bg-gradient-to-br from-card/80 to-card/50 p-4 rounded-lg border border-border/50 shadow-sm hover:shadow-md transition-shadow duration-300">
+            <div className="bg-gradient-to-br from-card/80 to-card/50 p-4 rounded-lg border border-primary/20 shadow-sm hover:shadow-md transition-all duration-300">
               <div className="text-primary font-bold text-xl mb-1">{dailyAvg}</div>
               <div className="text-gray-400 flex items-center">
                 <Calendar className="h-4 w-4 mr-1 text-primary/70" />
                 <span>Daily Average</span>
               </div>
             </div>
-            <div className="bg-gradient-to-br from-card/80 to-card/50 p-4 rounded-lg border border-border/50 shadow-sm hover:shadow-md transition-shadow duration-300">
+            <div className="bg-gradient-to-br from-card/80 to-card/50 p-4 rounded-lg border border-primary/20 shadow-sm hover:shadow-md transition-all duration-300">
               <div className="text-primary font-bold text-xl mb-1">{monthlyAvg}</div>
               <div className="text-gray-400 flex items-center">
                 <Grid className="h-4 w-4 mr-1 text-primary/70" />

@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useAuth } from '@/components/providers/auth-provider';
 import { TransactionActivity } from '@/components/dashboard/transaction-activity';
-import { SolBalance } from '@/components/dashboard/sol-balance';
 import { PortfolioValue } from '@/components/dashboard/portfolio-value';
 
 export default function DashboardPage() {
@@ -42,32 +41,33 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div>
-        <h1 className="text-3xl font-bold mb-8 text-primary">
-          {searchParams.get('address') && searchParams.get('address') !== publicKey?.toString()
-            ? 'Wallet Analytics'
-            : 'My Dashboard'}
-        </h1>
+    <div className="min-h-screen bg-gradient-to-b from-background to-background/80 pb-10">
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-10">
+          <h1 className="text-4xl font-bold mb-2 text-primary">
+            {searchParams.get('address') && searchParams.get('address') !== publicKey?.toString()
+              ? 'Wallet Analytics'
+              : 'My Dashboard'}
+          </h1>
 
-        {walletAddress &&
-          searchParams.get('address') &&
-          searchParams.get('address') !== publicKey?.toString() && (
-            <div className="mb-8 text-sm text-gray-400">
-              Viewing data for: <span className="font-mono">{walletAddress}</span>
-            </div>
-          )}
+          {walletAddress &&
+            searchParams.get('address') &&
+            searchParams.get('address') !== publicKey?.toString() && (
+              <div className="mb-4 text-sm text-gray-400 flex items-center">
+                <span className="mr-2">Viewing data for:</span>
+                <span className="font-mono bg-card/50 px-3 py-1 rounded-full text-xs">
+                  {walletAddress}
+                </span>
+              </div>
+            )}
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="col-span-3">
+        <div className="grid grid-cols-1 gap-8">
+          <div className="transform transition-all duration-300 hover:translate-y-[-2px] hover:shadow-xl">
             <TransactionActivity walletAddress={walletAddress} />
           </div>
 
-          <div className="h-full">
-            <SolBalance walletAddress={walletAddress} />
-          </div>
-
-          <div className="col-span-2 h-full">
+          <div className="transform transition-all duration-300 hover:translate-y-[-2px] hover:shadow-xl">
             <PortfolioValue walletAddress={walletAddress} />
           </div>
         </div>

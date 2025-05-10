@@ -6,6 +6,7 @@ import CalendarHeatmap from 'react-calendar-heatmap';
 import 'react-calendar-heatmap/dist/styles.css';
 import './transaction-activity.css';
 import { subYears, format, differenceInDays, differenceInMonths } from 'date-fns';
+import { Clock, Calendar, Grid, Activity } from 'lucide-react';
 
 export function TransactionActivity({ walletAddress }: { walletAddress?: string }) {
   const { data: transactions, isLoading, error } = useTransactionHistory(walletAddress);
@@ -62,10 +63,10 @@ export function TransactionActivity({ walletAddress }: { walletAddress?: string 
   }
 
   return (
-    <div className="p-6 bg-card rounded-lg border border-border">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-medium text-primary">Transaction Activity</h2>
-        <span className="text-sm text-gray-400">{yearRangeText}</span>
+    <div className="p-8 bg-card rounded-xl border border-border shadow-lg">
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-2xl font-semibold text-primary">Transaction Activity</h2>
+        <span className="text-sm bg-primary/10 px-3 py-1 rounded-full text-primary font-medium">{yearRangeText}</span>
       </div>
 
       {walletAddress ? (
@@ -114,31 +115,40 @@ export function TransactionActivity({ walletAddress }: { walletAddress?: string 
             />
           </div>
 
-          <div className="grid grid-cols-3 gap-4 mt-6 mb-4 text-sm">
-            <div className="bg-card/50 p-3 rounded-md border border-border">
-              <div className="text-primary font-medium">{totalTransactions}</div>
-              <div className="text-gray-400">Total Transactions</div>
+          <div className="grid grid-cols-3 gap-6 mt-8 mb-6 text-sm">
+            <div className="bg-gradient-to-br from-card/80 to-card/50 p-4 rounded-lg border border-border/50 shadow-sm hover:shadow-md transition-shadow duration-300">
+              <div className="text-primary font-bold text-xl mb-1">{totalTransactions.toLocaleString()}</div>
+              <div className="text-gray-400 flex items-center">
+                <Activity className="h-4 w-4 mr-1 text-primary/70" />
+                <span>Total Transactions</span>
+              </div>
             </div>
-            <div className="bg-card/50 p-3 rounded-md border border-border">
-              <div className="text-primary font-medium">{dailyAvg}</div>
-              <div className="text-gray-400">Daily Average</div>
+            <div className="bg-gradient-to-br from-card/80 to-card/50 p-4 rounded-lg border border-border/50 shadow-sm hover:shadow-md transition-shadow duration-300">
+              <div className="text-primary font-bold text-xl mb-1">{dailyAvg}</div>
+              <div className="text-gray-400 flex items-center">
+                <Calendar className="h-4 w-4 mr-1 text-primary/70" />
+                <span>Daily Average</span>
+              </div>
             </div>
-            <div className="bg-card/50 p-3 rounded-md border border-border">
-              <div className="text-primary font-medium">{monthlyAvg}</div>
-              <div className="text-gray-400">Monthly Average</div>
+            <div className="bg-gradient-to-br from-card/80 to-card/50 p-4 rounded-lg border border-border/50 shadow-sm hover:shadow-md transition-shadow duration-300">
+              <div className="text-primary font-bold text-xl mb-1">{monthlyAvg}</div>
+              <div className="text-gray-400 flex items-center">
+                <Grid className="h-4 w-4 mr-1 text-primary/70" />
+                <span>Monthly Average</span>
+              </div>
             </div>
           </div>
 
-          <div className="flex justify-end mt-2 text-sm text-gray-400">
-            <div className="flex items-center space-x-2">
-              <span>Less</span>
-              <div className="w-3 h-3 bg-[#ebedf0] dark:bg-[#161b22] rounded-sm"></div>
-              <div className="w-3 h-3 bg-[rgba(117,64,179,0.2)] dark:bg-[rgba(138,86,204,0.2)] rounded-sm"></div>
-              <div className="w-3 h-3 bg-[rgba(117,64,179,0.4)] dark:bg-[rgba(138,86,204,0.4)] rounded-sm"></div>
-              <div className="w-3 h-3 bg-[rgba(117,64,179,0.6)] dark:bg-[rgba(138,86,204,0.6)] rounded-sm"></div>
-              <div className="w-3 h-3 bg-[rgba(117,64,179,0.8)] dark:bg-[rgba(138,86,204,0.8)] rounded-sm"></div>
-              <div className="w-3 h-3 bg-[rgba(117,64,179,1)] dark:bg-[rgba(138,86,204,1)] rounded-sm"></div>
-              <span>More</span>
+          <div className="flex justify-end mt-4 text-sm">
+            <div className="flex items-center space-x-2 bg-card/30 px-4 py-2 rounded-full shadow-inner">
+              <span className="text-gray-400 font-medium">Less</span>
+              <div className="w-4 h-4 bg-[#ebedf0] dark:bg-[#161b22] rounded-sm shadow-sm"></div>
+              <div className="w-4 h-4 bg-[rgba(117,64,179,0.2)] dark:bg-[rgba(138,86,204,0.2)] rounded-sm shadow-sm"></div>
+              <div className="w-4 h-4 bg-[rgba(117,64,179,0.4)] dark:bg-[rgba(138,86,204,0.4)] rounded-sm shadow-sm"></div>
+              <div className="w-4 h-4 bg-[rgba(117,64,179,0.6)] dark:bg-[rgba(138,86,204,0.6)] rounded-sm shadow-sm"></div>
+              <div className="w-4 h-4 bg-[rgba(117,64,179,0.8)] dark:bg-[rgba(138,86,204,0.8)] rounded-sm shadow-sm"></div>
+              <div className="w-4 h-4 bg-[rgba(117,64,179,1)] dark:bg-[rgba(138,86,204,1)] rounded-sm shadow-sm"></div>
+              <span className="text-gray-400 font-medium">More</span>
             </div>
           </div>
         </div>

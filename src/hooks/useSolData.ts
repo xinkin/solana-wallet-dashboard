@@ -114,7 +114,6 @@ export function useTokenHoldings(address: string | undefined) {
             const tokenAddresses = validTokens.map(token => token.mint);
             const prices = await fetchTokenPrices(tokenAddresses);
 
-            // Filter out tokens with no price data (likely spam or very obscure tokens)
             const tokensWithPrices = validTokens.filter(token => {
               const price = prices[token.mint];
               if (price) {
@@ -127,8 +126,6 @@ export function useTokenHoldings(address: string | undefined) {
             return tokensWithPrices;
           } catch (priceError) {
             console.error('Error fetching token prices:', priceError);
-            // If price fetching fails, return tokens without price data
-            // but don't filter them out
             validTokens.forEach(token => {
               token.usdValue = 0;
             });

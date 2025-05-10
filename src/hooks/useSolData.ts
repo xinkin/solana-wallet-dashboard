@@ -8,8 +8,9 @@ import {
   TokenData,
   TokenAmountInfo,
   TransactionHeatmapData,
-  PortfolioData
+  PortfolioData,
 } from '../types/solana';
+import { fetchSolPrice, fetchTokenPrices } from '../utils/price';
 
 export function useSolBalance(address: string | undefined) {
   return useQuery<SolBalance>({
@@ -36,10 +37,15 @@ export function useSolBalance(address: string | undefined) {
       }
 
       const lamports = data.result.value;
+      const balance = lamports / 1_000_000_000;
+
+      const usdPrice = await fetchSolPrice();
 
       return {
-        balance: lamports / 1_000_000_000,
+        balance,
         lamports,
+        usdPrice,
+        usdValue: balance * usdPrice,
       };
     },
     enabled: !!address,
@@ -55,7 +61,6 @@ export function useTokenHoldings(address: string | undefined) {
 
       const tokenAccounts = await fetchTokenAccounts(address);
 
-      const tokens: TokenData[] = [];
       const mintAddresses: string[] = [];
       const mintToAmountMap: Record<string, TokenAmountInfo> = {};
 
@@ -73,51 +78,67 @@ export function useTokenHoldings(address: string | undefined) {
         };
       }
 
-      if (mintAddresses.length === 0) return [];
-
       try {
-        const tokenMetadata = await fetchTokenMetadata(mintAddresses.slice(0, 100));
+        if (mintAddresses.length === 0) return [];
 
-        for (const asset of tokenMetadata) {
-          const assetId = asset?.id as string;
-          if (asset && assetId && mintToAmountMap[assetId]) {
-            const symbol = asset.content?.metadata?.symbol || 'Unknown';
-            const name = asset.content?.metadata?.name || 'Unknown Token';
-            const amount = mintToAmountMap[assetId].amount;
-            const decimals = mintToAmountMap[assetId].decimals;
-            const logo = asset.content?.links?.image || null;
+        const tokenMetadata = await fetchTokenMetadata(mintAddresses);
+        const validTokens: TokenData[] = [];
 
-            if (isLikelySpamToken(symbol, name, amount, decimals)) {
-              continue;
-            }
+        for (const metadata of tokenMetadata) {
+          const assetId = metadata.id;
+          if (!mintToAmountMap[assetId]) continue;
 
-            tokens.push({
-              mint: assetId,
-              symbol,
-              name,
-              amount,
-              decimals,
-              usdValue: null,
-              logo,
+          const { amount, decimals } = mintToAmountMap[assetId];
+
+          const symbol = metadata.content?.metadata?.symbol || 'Unknown';
+          const name = metadata.content?.metadata?.name || 'Unknown Token';
+          const logo = metadata.content?.links?.image || null;
+
+          if (isLikelySpamToken(symbol, name, amount, decimals)) {
+            continue;
+          }
+
+          validTokens.push({
+            mint: assetId,
+            symbol,
+            name,
+            amount,
+            decimals,
+            usdValue: null,
+            logo,
+          });
+        }
+
+        if (validTokens.length > 0) {
+          try {
+            const tokenAddresses = validTokens.map(token => token.mint);
+            const prices = await fetchTokenPrices(tokenAddresses);
+
+            // Filter out tokens with no price data (likely spam or very obscure tokens)
+            const tokensWithPrices = validTokens.filter(token => {
+              const price = prices[token.mint];
+              if (price) {
+                token.usdValue = token.amount * price;
+                return true;
+              }
+              return false;
+            });
+
+            return tokensWithPrices;
+          } catch (priceError) {
+            console.error('Error fetching token prices:', priceError);
+            // If price fetching fails, return tokens without price data
+            // but don't filter them out
+            validTokens.forEach(token => {
+              token.usdValue = 0;
             });
           }
         }
+        return validTokens;
       } catch (error) {
         console.error('Error fetching token metadata:', error);
-        for (const mint of mintAddresses) {
-          tokens.push({
-            mint,
-            symbol: 'Unknown',
-            name: 'Unknown Token',
-            amount: mintToAmountMap[mint].amount,
-            decimals: mintToAmountMap[mint].decimals,
-            usdValue: null,
-            logo: null,
-          });
-        }
+        return [];
       }
-
-      return tokens;
     },
     enabled: !!address,
     staleTime: STALE_TIMES.TOKENS,
@@ -160,8 +181,10 @@ function isLikelySpamToken(
   amount: number,
   decimals: number
 ): boolean {
+  // Tokens with extremely high decimals are likely spam
   if (decimals > 12) return true;
 
+  // Tokens with extremely large amounts are likely spam
   if (amount > 1_000_000_000) return true;
 
   const suspiciousTerms = [
@@ -174,18 +197,31 @@ function isLikelySpamToken(
     'scam',
     'fake',
     'test',
+    'memo',
+    'promo',
+    'bot',
+    'hack',
+    'giveaway',
   ];
   const lowerSymbol = symbol.toLowerCase();
   const lowerName = name.toLowerCase();
 
+  // Check for suspicious terms in name or symbol
   if (suspiciousTerms.some(term => lowerSymbol.includes(term) || lowerName.includes(term))) {
     return true;
   }
 
+  // Excessively long names or symbols are suspicious
   if (symbol.length > 12 || name.length > 30) return true;
 
+  // Tokens with random-looking character sequences are likely spam
   const hasRandomCharSequence = /[A-Z0-9]{10,}/.test(symbol);
   if (hasRandomCharSequence) return true;
+
+  // Check for excessive number of digits in token amount
+  // which often indicates dust attacks or spam tokens
+  const amountStr = amount.toString();
+  if (amountStr.length > 15 && amountStr.includes('e+')) return true;
 
   return false;
 }
@@ -284,9 +320,10 @@ export function usePortfolioValue(address: string | undefined) {
 
       if (!solData || !tokenData) throw new Error('Failed to fetch portfolio data');
 
-      const solPrice = await fetchMockSolPrice();
-      const solValue = solData.balance * solPrice;
+      // Use the USD value directly from the SOL balance data
+      const solValue = solData.usdValue;
 
+      // Sum up token USD values
       const tokenValue = tokenData.reduce((sum, token) => {
         return sum + (token.usdValue || 0);
       }, 0);
@@ -304,9 +341,4 @@ export function usePortfolioValue(address: string | undefined) {
     enabled: solBalanceQuery.isSuccess && tokenHoldingsQuery.isSuccess,
     staleTime: STALE_TIMES.PORTFOLIO,
   });
-}
-
-async function fetchMockSolPrice(): Promise<number> {
-  await new Promise(resolve => setTimeout(resolve, 100));
-  return 150;
 }

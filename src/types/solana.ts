@@ -1,7 +1,17 @@
 // API Constants
+// Helius API (Solana RPC)
 export const HELIUS_API_KEY = process.env.NEXT_PUBLIC_HELIUS_API_KEY;
 export const HELIUS_RPC_URL = `https://mainnet.helius-rpc.com/?api-key=${HELIUS_API_KEY}`;
 export const HELIUS_API_URL = 'https://api.helius.xyz/v0';
+
+// CoinGecko API
+export const COINGECKO_API_KEY = process.env.NEXT_PUBLIC_COINGECKO_API_KEY!;
+export const COINGECKO_API_URL = 'https://api.coingecko.com/api/v3';
+export const COINGECKO_SOLANA_ID = 'solana';
+export const COINGECKO_PLATFORM = 'solana';
+
+// Cache settings
+export const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 // Cache durations
 export const STALE_TIMES = {
@@ -15,6 +25,8 @@ export const STALE_TIMES = {
 export interface SolBalance {
   balance: number;
   lamports: number;
+  usdPrice: number;
+  usdValue: number;
 }
 
 export interface TokenData {

@@ -29,14 +29,42 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const router = useRouter();
   const pathname = usePathname();
 
+  // Store the last authenticated public key
+  const [lastAuthenticatedKey, setLastAuthenticatedKey] = useState<string | null>(null);
+
+  // Check for saved authentication on initial load
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const savedAuth = localStorage.getItem('solanalytics-auth');
-      if (savedAuth === 'true' && connected) {
-        setIsAuthenticated(true);
+      const savedKey = localStorage.getItem('solanalytics-pubkey');
+      
+      console.log('Initial auth check:', { savedAuth, savedKey, connected, currentKey: publicKey?.toString() });
+      
+      if (savedAuth === 'true') {
+        if (connected && publicKey) {
+          // Wallet is already connected and matches saved state
+          setIsAuthenticated(true);
+          setLastAuthenticatedKey(publicKey.toString());
+          console.log('Authentication restored - wallet already connected');
+        } else if (savedKey) {
+          // Save the last authenticated key for comparison when wallet connects
+          setLastAuthenticatedKey(savedKey);
+          console.log('Saved authenticated key for later verification');
+        }
       }
     }
-  }, [connected]);
+  }, []);
+  
+  // Handle wallet connection changes
+  useEffect(() => {
+    if (connected && publicKey && lastAuthenticatedKey) {
+      // If wallet connects and matches the last authenticated key, restore auth
+      if (publicKey.toString() === lastAuthenticatedKey) {
+        setIsAuthenticated(true);
+        console.log('Authentication restored - wallet reconnected');
+      }
+    }
+  }, [connected, publicKey, lastAuthenticatedKey]);
 
   useEffect(() => {
     if (!connected) {
@@ -84,8 +112,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const result = await response.json();
 
         if (result.success) {
+          // Store authentication state in localStorage
+          try {
+            localStorage.setItem('solanalytics-auth', 'true');
+            console.log('Authentication saved to localStorage');
+          } catch (storageError) {
+            console.error('Failed to save auth state to localStorage:', storageError);
+          }
           setIsAuthenticated(true);
-          localStorage.setItem('solanalytics-auth', 'true');
           router.push('/dashboard');
         } else {
           setAuthError('Signature verification failed. Please try again.');

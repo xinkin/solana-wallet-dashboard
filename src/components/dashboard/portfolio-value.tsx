@@ -93,13 +93,15 @@ export function PortfolioValue({ walletAddress }: { walletAddress?: string }) {
                 Token Holdings
               </h3>
               <p className="text-sm bg-primary/10 px-3 py-1 rounded-full text-primary font-medium">
-                {data.tokens.length} tokens
+                Top {Math.min(10, data.tokens.length)} of {data.tokens.length} tokens
               </p>
             </div>
 
             {data.tokens.length > 0 ? (
               <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
-                {data.tokens.map((token: TokenData) => (
+                {data.tokens
+                  .sort((a, b) => (b.usdValue || 0) - (a.usdValue || 0))
+                  .map((token: TokenData) => (
                   <div
                     key={token.mint}
                     className="flex justify-between items-center p-4 bg-gradient-to-br from-card/80 to-card/50 rounded-lg shadow-sm hover:shadow-md hover:bg-card/70 transition-all duration-300 hover:translate-x-1"

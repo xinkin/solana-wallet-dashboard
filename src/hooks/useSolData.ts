@@ -111,10 +111,16 @@ export function useTokenHoldings(address: string | undefined) {
 
         if (validTokens.length > 0) {
           try {
-            const tokenAddresses = validTokens.map(token => token.mint);
+            // Sort tokens by amount (as a proxy for value before we have prices)
+            // and limit to top 10 to reduce API calls
+            const topTokens = validTokens
+              .sort((a, b) => b.amount - a.amount)
+              .slice(0, 10);
+              
+            const tokenAddresses = topTokens.map(token => token.mint);
             const prices = await fetchTokenPrices(tokenAddresses);
 
-            const tokensWithPrices = validTokens.filter(token => {
+            const tokensWithPrices = topTokens.filter(token => {
               const price = prices[token.mint];
               if (price) {
                 token.usdValue = token.amount * price;

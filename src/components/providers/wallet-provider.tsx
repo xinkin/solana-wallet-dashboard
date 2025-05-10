@@ -21,7 +21,7 @@ export const WalletProvider: FC<WalletProviderProps> = ({ children }) => {
 
   const wallets = useMemo(
     () => [new PhantomWalletAdapter(), new SolflareWalletAdapter()],
-    [network]
+    []
   );
 
   return (

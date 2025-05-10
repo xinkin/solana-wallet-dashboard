@@ -37,9 +37,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (typeof window !== 'undefined') {
       const savedAuth = localStorage.getItem('solanalytics-auth');
       const savedKey = localStorage.getItem('solanalytics-pubkey');
-      
-      console.log('Initial auth check:', { savedAuth, savedKey, connected, currentKey: publicKey?.toString() });
-      
+
+      console.log('Initial auth check:', {
+        savedAuth,
+        savedKey,
+        connected,
+        currentKey: publicKey?.toString(),
+      });
+
       if (savedAuth === 'true') {
         if (connected && publicKey) {
           // Wallet is already connected and matches saved state
@@ -54,7 +59,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
     }
   }, []);
-  
+
   // Handle wallet connection changes
   useEffect(() => {
     if (connected && publicKey && lastAuthenticatedKey) {

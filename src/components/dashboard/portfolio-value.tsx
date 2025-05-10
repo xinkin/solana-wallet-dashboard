@@ -3,7 +3,6 @@
 import { usePortfolioValue, useSolBalance } from '@/hooks/useSolData';
 import { TokenData } from '@/types/solana';
 import { CreditCard, Coins, CircleDollarSign, FileX } from 'lucide-react';
-import Image from 'next/image';
 
 function renderSkeletonLoader() {
   return (
@@ -102,48 +101,48 @@ export function PortfolioValue({ walletAddress }: { walletAddress?: string }) {
                 {data.tokens
                   .sort((a, b) => (b.usdValue || 0) - (a.usdValue || 0))
                   .map((token: TokenData) => (
-                  <div
-                    key={token.mint}
-                    className="flex justify-between items-center p-4 bg-gradient-to-br from-card/80 to-card/50 rounded-lg shadow-sm hover:shadow-md hover:bg-card/70 transition-all duration-300 hover:translate-x-1"
-                  >
-                    <div className="flex items-center">
-                      {token.logo ? (
-                        <img
-                          src={token.logo}
-                          alt={token.symbol}
-                          className="w-10 h-10 rounded-full mr-4 shadow-md"
-                        />
-                      ) : (
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/30 to-purple-500/30 flex items-center justify-center mr-4 text-primary shadow-md">
-                          {token.symbol.charAt(0)}
-                        </div>
-                      )}
-                      <div>
-                        <div className="font-semibold flex items-center text-primary">
-                          {token.name}
-                          <span className="ml-2 text-xs px-2 py-0.5 bg-gray-700/30 rounded-full text-gray-400">
-                            {token.symbol}
-                          </span>
-                        </div>
-                        <div className="text-sm text-gray-400 mt-1">
-                          {token.amount.toLocaleString(undefined, {
-                            maximumFractionDigits: token.decimals > 6 ? 6 : token.decimals,
-                          })}
+                    <div
+                      key={token.mint}
+                      className="flex justify-between items-center p-4 bg-gradient-to-br from-card/80 to-card/50 rounded-lg shadow-sm hover:shadow-md hover:bg-card/70 transition-all duration-300 hover:translate-x-1"
+                    >
+                      <div className="flex items-center">
+                        {token.logo ? (
+                          <img
+                            src={token.logo}
+                            alt={token.symbol}
+                            className="w-10 h-10 rounded-full mr-4 shadow-md"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/30 to-purple-500/30 flex items-center justify-center mr-4 text-primary shadow-md">
+                            {token.symbol.charAt(0)}
+                          </div>
+                        )}
+                        <div>
+                          <div className="font-semibold flex items-center text-primary">
+                            {token.name}
+                            <span className="ml-2 text-xs px-2 py-0.5 bg-gray-700/30 rounded-full text-gray-400">
+                              {token.symbol}
+                            </span>
+                          </div>
+                          <div className="text-sm text-gray-400 mt-1">
+                            {token.amount.toLocaleString(undefined, {
+                              maximumFractionDigits: token.decimals > 6 ? 6 : token.decimals,
+                            })}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-bold text-lg">
-                        ${token.usdValue ? token.usdValue.toFixed(2) : '0.00'}
-                      </div>
-                      {token.usdValue && data.solValue > 0 && (
-                        <div className="text-xs text-gray-400 mt-1 bg-card/50 px-2 py-1 rounded-full inline-block">
-                          ~{((token.usdValue / data.solValue) * data.solBalance).toFixed(4)} SOL
+                      <div className="text-right">
+                        <div className="font-bold text-lg">
+                          ${token.usdValue ? token.usdValue.toFixed(2) : '0.00'}
                         </div>
-                      )}
+                        {token.usdValue && data.solValue > 0 && (
+                          <div className="text-xs text-gray-400 mt-1 bg-card/50 px-2 py-1 rounded-full inline-block">
+                            ~{((token.usdValue / data.solValue) * data.solBalance).toFixed(4)} SOL
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             ) : (
               <div className="text-center py-8 bg-card/30 rounded-lg border border-primary/20 shadow-inner">

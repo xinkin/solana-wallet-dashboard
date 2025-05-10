@@ -317,10 +317,8 @@ export function usePortfolioValue(address: string | undefined) {
 
       if (!solData || !tokenData) throw new Error('Failed to fetch portfolio data');
 
-      // Use the USD value directly from the SOL balance data
       const solValue = solData.usdValue;
 
-      // Sum up token USD values
       const tokenValue = tokenData.reduce((sum, token) => {
         return sum + (token.usdValue || 0);
       }, 0);

@@ -2,27 +2,52 @@
 
 import { usePortfolioValue, useSolBalance } from '@/hooks/useSolData';
 import { TokenData } from '@/types/solana';
-import { DollarSign, CreditCard, Coins, CircleDollarSign, FileX } from 'lucide-react';
+import { CreditCard, Coins, CircleDollarSign, FileX } from 'lucide-react';
+
+function renderSkeletonLoader() {
+  return (
+    <div className="animate-pulse space-y-6">
+      <div className="h-10 w-48 bg-gray-700/50 rounded-lg"></div>
+
+      <div className="grid grid-cols-2 gap-6">
+        <div className="p-4 bg-card/50 rounded-lg border border-border/50 h-20"></div>
+        <div className="p-4 bg-card/50 rounded-lg border border-border/50 h-20"></div>
+      </div>
+
+      <div className="h-6 w-full bg-gray-700/50 rounded mt-6"></div>
+      <div className="h-6 w-full bg-gray-700/50 rounded mt-6"></div>
+
+      <div className="space-y-4 mt-4">
+        <div className="p-4 bg-card/50 rounded-lg border border-border/50 h-16"></div>
+        <div className="p-4 bg-card/50 rounded-lg border border-border/50 h-16"></div>
+      </div>
+    </div>
+  );
+}
 
 export function PortfolioValue({ walletAddress }: { walletAddress?: string }) {
   const { data, isLoading, error } = usePortfolioValue(walletAddress);
   const { data: solData, isLoading: solIsLoading, error: solError } = useSolBalance(walletAddress);
 
-  if (isLoading) {
-    return (
-      <div className="p-6 bg-card rounded-lg border border-border">
-        <h2 className="text-xl font-medium text-primary mb-6">Portfolio Value</h2>
-        <div className="animate-pulse h-8 w-40 bg-gray-700 rounded"></div>
-      </div>
-    );
+  if (isLoading && !data) {
+    return renderSkeletonLoader();
   }
-
-  if (error || !data) {
+  if (error && !isLoading && !data) {
     return (
-      <div className="p-6 bg-card rounded-lg border border-border">
-        <h2 className="text-xl font-medium text-primary mb-6">Portfolio Value</h2>
-        <div className="text-red-500">
-          {error instanceof Error ? `Error: ${error.message}` : 'Failed to load portfolio data'}
+      <div className="p-8 bg-card rounded-xl border border-border shadow-lg h-full">
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold text-primary">Portfolio Value</h2>
+        </div>
+        <div className="flex flex-col items-center justify-center py-12">
+          <FileX className="h-12 w-12 text-red-400/70 mb-4" />
+          <div className="text-red-400 font-medium text-center">
+            {error && typeof error === 'object' && 'message' in error
+              ? (error as Error).message
+              : 'Failed to load portfolio data'}
+          </div>
+          <p className="text-gray-500 mt-2 text-sm text-center max-w-md">
+            This could be due to API rate limits or network issues. Please try again later.
+          </p>
         </div>
       </div>
     );
@@ -34,7 +59,7 @@ export function PortfolioValue({ walletAddress }: { walletAddress?: string }) {
         <h2 className="text-2xl font-semibold text-primary">Portfolio Value</h2>
       </div>
 
-      {walletAddress ? (
+      {walletAddress && data ? (
         <div>
           <div className="text-4xl font-bold mb-8">${data.totalValue.toFixed(2)}</div>
 
@@ -126,9 +151,7 @@ export function PortfolioValue({ walletAddress }: { walletAddress?: string }) {
           </div>
         </div>
       ) : (
-        <div className="text-center py-12">
-          <p className="text-gray-400">Connect your wallet or enter an address to view portfolio</p>
-        </div>
+        renderSkeletonLoader()
       )}
     </div>
   );

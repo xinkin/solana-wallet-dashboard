@@ -38,7 +38,7 @@ export function LandingHero() {
             <div className="flex flex-col items-center space-y-4">
               <button
                 onClick={signMessage}
-                className="bg-primary hover:bg-primary/90 text-white font-medium py-3 px-8 rounded-full transition-colors"
+                className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-full cursor-pointer"
               >
                 Sign Message to Authenticate
               </button>

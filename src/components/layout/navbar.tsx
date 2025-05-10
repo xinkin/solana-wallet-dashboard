@@ -51,21 +51,21 @@ export function Navbar() {
         } border-b border-border`}
       >
         <div className="container mx-auto flex h-16 md:h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center">
+          <div className="flex items-center space-x-4">
             <span className="text-lg sm:text-xl md:text-2xl font-bold text-primary cursor-pointer">
               Solanalytics
             </span>
-          </div>
-
-          <div className="flex items-center space-x-3 sm:space-x-6">
             {isAuthenticated && (
               <button
                 onClick={() => router.push('/dashboard')}
-                className="hidden sm:flex items-center justify-center text-sm font-medium px-4 py-2 rounded-full transition-all hover:bg-card hover:text-primary border border-border"
+                className="hidden sm:flex items-center justify-center text-sm text-gray-400 px-4 py-2 rounded-full transition-all hover:bg-card/50 hover:text-primary cursor-pointer"
               >
                 My Dashboard
               </button>
             )}
+          </div>
+
+          <div className="flex items-center space-x-3 sm:space-x-6">
             {isDashboard && isAuthenticated && (
               <div className="relative">
                 {showSearch ? (
@@ -94,7 +94,7 @@ export function Navbar() {
                 ) : (
                   <button
                     onClick={() => setShowSearch(true)}
-                    className="hidden sm:flex items-center justify-center text-sm font-medium px-4 py-2 rounded-full transition-all hover:bg-card hover:text-primary border border-border"
+                    className="hidden sm:flex items-center justify-center text-sm font-medium px-4 py-2 rounded-full transition-all hover:bg-card hover:text-primary border border-border cursor-pointer"
                   >
                     Search Wallet
                   </button>

@@ -1,31 +1,45 @@
 'use client';
+import { useSolBalance } from '@/hooks/useSolData';
 
-import { useState } from 'react';
+export function SolBalance({ walletAddress }: { walletAddress?: string }) {
+  const { data, isLoading, error } = useSolBalance(walletAddress);
 
-interface SolBalanceProps {
-  walletAddress?: string;
-}
+  if (isLoading) {
+    return (
+      <div className="p-6 bg-card rounded-lg border border-border">
+        <h2 className="text-xl font-medium text-primary mb-6">SOL Balance</h2>
+        <div className="animate-pulse h-8 w-32 bg-gray-700 rounded"></div>
+      </div>
+    );
+  }
 
-export function SolBalance({ walletAddress }: SolBalanceProps) {
-  // Sample data - would be replaced with actual balance from an API
-  const [balance] = useState(Math.random() * 10 + 2);
-  const [usdValue] = useState(balance * 150); // Assuming 1 SOL = $150
-  
+  if (error || !data) {
+    return (
+      <div className="p-6 bg-card rounded-lg border border-border">
+        <h2 className="text-xl font-medium text-primary mb-6">SOL Balance</h2>
+        <div className="text-red-500">Failed to load balance</div>
+      </div>
+    );
+  }
+
+  const solBalance = data.balance || data.lamports / 1_000_000_000;
+
+  const solPrice = 150;
+  const usdValue = solBalance * solPrice;
+
   return (
-    <div className="p-6 bg-card rounded-lg border border-border h-full">
-      <h2 className="text-xl font-medium text-primary mb-4">SOL Balance</h2>
-      
-      {walletAddress ? (
-        <div className="flex flex-col items-center justify-center h-[calc(100%-2rem)]">
-          <div className="text-4xl font-bold">{balance.toFixed(2)}</div>
-          <div className="text-sm text-gray-400 mt-2">SOL</div>
-          <div className="text-lg text-gray-300 mt-4">${usdValue.toFixed(2)}</div>
+    <div className="p-6 bg-card rounded-lg border border-border">
+      <h2 className="text-xl font-medium text-primary mb-6">SOL Balance</h2>
+      <div className="flex flex-col space-y-2">
+        <div className="flex items-center">
+          <span className="text-3xl font-bold">{solBalance.toFixed(4)}</span>
+          <span className="ml-2 text-lg text-gray-400">SOL</span>
         </div>
-      ) : (
-        <div className="flex items-center justify-center h-[calc(100%-2rem)]">
-          <p className="text-gray-400">Connect your wallet to see your SOL balance</p>
+        <div className="text-lg text-gray-400">
+          ${usdValue.toFixed(2)} USD
+          <span className="text-sm ml-2">@ ${solPrice} per SOL</span>
         </div>
-      )}
+      </div>
     </div>
   );
 }

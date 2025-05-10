@@ -16,7 +16,6 @@ export default function DashboardPage() {
   const pathname = usePathname();
   const [walletAddress, setWalletAddress] = useState<string | undefined>();
 
-  // Set wallet address from URL param or connected wallet
   useEffect(() => {
     const addressParam = searchParams.get('address');
     if (addressParam) {
@@ -26,21 +25,18 @@ export default function DashboardPage() {
     }
   }, [publicKey, searchParams]);
 
-  // Update wallet address when viewing own dashboard
   useEffect(() => {
     if (publicKey && !searchParams.get('address') && pathname === '/dashboard') {
       setWalletAddress(publicKey.toString());
     }
   }, [publicKey, searchParams, pathname]);
 
-  // Redirect to home if not authenticated and not viewing a specific address
   useEffect(() => {
     if (!isAuthenticated && !searchParams.get('address')) {
       router.push('/');
     }
   }, [isAuthenticated, router, searchParams]);
 
-  // Don't render anything while redirecting
   if (!isAuthenticated && !searchParams.get('address')) {
     return null;
   }

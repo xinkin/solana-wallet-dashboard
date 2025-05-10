@@ -1,0 +1,143 @@
+/* GitHub-style heatmap container */
+.github-heatmap-container {
+  position: relative;
+  padding: 1.5rem 0.5rem;
+  margin-bottom: 1.5rem;
+  border-radius: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Month labels styling */
+.month-labels {
+  position: relative;
+  height: 20px;
+  width: 100%;
+  margin-bottom: 5px;
+} 
+
+.month-label {
+  position: absolute;
+  font-size: 0.7rem;
+  color: #a1a1aa;
+  transform: translateX(-50%);
+}
+
+/* Weekday labels styling */
+.weekday-labels {
+  position: absolute;
+  left: 0;
+  top: 40px;
+  /* Position below month labels */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: calc(100% - 40px);
+  width: 30px;
+}
+
+.weekday-label {
+  font-size: 0.7rem;
+  color: #a1a1aa;
+  text-align: right;
+  padding-right: 5px;
+}
+
+/* Heatmap wrapper */
+.heatmap-wrapper {
+  width: 100%;
+  overflow: hidden;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+}
+
+/* Basic styling for heatmap cells */
+.react-calendar-heatmap rect {
+  stroke: rgba(0, 0, 0, 0.05);
+  stroke-width: 1px;
+}
+
+/* Improve tooltip visibility */
+.react-calendar-heatmap rect:hover {
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 1.5px;
+}
+
+/* Custom tooltip styling for native browser tooltips */
+[title] {
+  position: relative;
+  cursor: pointer;
+}
+
+/* Custom colors for the heatmap cells */
+.react-calendar-heatmap .color-empty {
+  fill: #1e1e2e;
+}
+
+/* Purple theme colors with opacity-based scaling */
+.react-calendar-heatmap .color-scale-1 {
+  fill: rgba(117, 64, 179, 0.2); /* 20% opacity - base for 1 transaction */
+}
+
+.react-calendar-heatmap .color-scale-2 {
+  fill: rgba(117, 64, 179, 0.4); /* 40% opacity */
+}
+
+.react-calendar-heatmap .color-scale-3 {
+  fill: rgba(117, 64, 179, 0.6); /* 60% opacity */
+}
+
+.react-calendar-heatmap .color-scale-4 {
+  fill: rgba(117, 64, 179, 0.8); /* 80% opacity */
+}
+
+.react-calendar-heatmap .color-scale-5 {
+  fill: rgba(117, 64, 179, 1); /* 100% opacity - max intensity */
+}
+
+/* Dark theme colors - purple with glow effect */
+@media (prefers-color-scheme: dark) {
+  .react-calendar-heatmap .color-empty {
+    fill: #161b22;
+  }
+
+  .react-calendar-heatmap .color-scale-1 {
+    fill: rgba(138, 86, 204, 0.2); /* 20% opacity */
+  }
+
+  .react-calendar-heatmap .color-scale-2 {
+    fill: rgba(138, 86, 204, 0.4); /* 40% opacity */
+  }
+
+  .react-calendar-heatmap .color-scale-3 {
+    fill: rgba(138, 86, 204, 0.6); /* 60% opacity */
+  }
+
+  .react-calendar-heatmap .color-scale-4 {
+    fill: rgba(138, 86, 204, 0.8); /* 80% opacity */
+  }
+  
+  .react-calendar-heatmap .color-scale-5 {
+    fill: rgba(138, 86, 204, 1); /* 100% opacity */
+  }
+  
+  /* Add a subtle glow to the container in dark mode */
+  .github-heatmap-container {
+    background-color: rgba(138, 86, 204, 0.03);
+  }
+}
+
+/* Fix for text styling */
+.react-calendar-heatmap text {
+  fill: #a1a1aa;
+  font-size: 0.6rem;
+}
+
+/* Cell styling */
+.react-calendar-heatmap rect {
+  rx: 2;
+  ry: 2;
+  stroke: rgba(0, 0, 0, 0.1);
+  stroke-width: 1px;
+  width: 10px;
+  height: 10px;
+}

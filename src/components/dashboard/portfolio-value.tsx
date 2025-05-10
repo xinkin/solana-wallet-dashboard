@@ -1,54 +1,65 @@
 'use client';
 
-import { useState } from 'react';
+import { usePortfolioValue } from '@/hooks/useSolData';
+import { TokenData } from '@/types/solana';
 
-interface PortfolioValueProps {
-  walletAddress?: string;
-}
+export function PortfolioValue({ walletAddress }: { walletAddress?: string }) {
+  const { data, isLoading, error } = usePortfolioValue(walletAddress);
 
-interface TokenData {
-  name: string;
-  symbol: string;
-  amount: number;
-  value: number;
-}
+  if (isLoading) {
+    return (
+      <div className="p-6 bg-card rounded-lg border border-border">
+        <h2 className="text-xl font-medium text-primary mb-6">Portfolio Value</h2>
+        <div className="animate-pulse h-8 w-40 bg-gray-700 rounded"></div>
+      </div>
+    );
+  }
 
-export function PortfolioValue({ walletAddress }: PortfolioValueProps) {
-  // Sample data - would be replaced with actual token data from an API
-  const [tokens] = useState<TokenData[]>(() => [
-    { name: 'Solana', symbol: 'SOL', amount: Math.random() * 10 + 2, value: Math.random() * 1500 + 300 },
-    { name: 'Bonk', symbol: 'BONK', amount: Math.random() * 1000000, value: Math.random() * 100 + 50 },
-    { name: 'Raydium', symbol: 'RAY', amount: Math.random() * 100 + 10, value: Math.random() * 200 + 100 },
-  ]);
-  
-  const totalValue = tokens.reduce((sum, token) => sum + token.value, 0);
-  
+  if (error || !data) {
+    return (
+      <div className="p-6 bg-card rounded-lg border border-border">
+        <h2 className="text-xl font-medium text-primary mb-6">Portfolio Value</h2>
+        <div className="text-red-500">Failed to load portfolio data</div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 bg-card rounded-lg border border-border h-full">
       <h2 className="text-xl font-medium text-primary mb-4">Portfolio Value</h2>
-      
+
       {walletAddress ? (
-        <div className="flex flex-col h-[calc(100%-2rem)]">
-          <div className="flex justify-between items-center mb-4">
-            <span className="text-sm text-gray-400">Total Value</span>
-            <span className="text-2xl font-bold">${totalValue.toFixed(2)}</span>
+        <div>
+          <div className="text-3xl font-bold mb-6">${data.totalValue.toFixed(2)}</div>
+
+          <div className="mt-4 grid grid-cols-2 gap-4">
+            <div className="p-3 bg-card/50 rounded-lg">
+              <p className="text-sm text-gray-400">SOL Value</p>
+              <p className="text-lg font-medium">${data.solValue.toFixed(2)}</p>
+            </div>
+            <div className="p-3 bg-card/50 rounded-lg">
+              <p className="text-sm text-gray-400">Token Value</p>
+              <p className="text-lg font-medium">${data.tokenValue.toFixed(2)}</p>
+            </div>
           </div>
-          
-          <div className="space-y-3 overflow-auto flex-1">
-            {tokens.map((token) => (
-              <div key={token.symbol} className="flex justify-between items-center p-2 rounded-md bg-accent/10">
-                <div className="flex items-center">
-                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center mr-3">
-                    {token.symbol.charAt(0)}
-                  </div>
-                  <div>
-                    <div className="font-medium">{token.symbol}</div>
-                    <div className="text-xs text-gray-400">{token.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
+
+          <div className="mt-6 space-y-4">
+            <h3 className="text-lg font-medium">Token Holdings</h3>
+            {data.tokens.map((token: TokenData) => (
+              <div
+                key={token.mint}
+                className="flex justify-between items-center p-3 bg-card/50 rounded-lg"
+              >
+                <div>
+                  <div className="font-medium">{token.name}</div>
+                  <div className="text-sm text-gray-400">
+                    {token.amount.toFixed(token.decimals)} {token.symbol}
                   </div>
                 </div>
                 <div className="text-right">
-                  <div>${token.value.toFixed(2)}</div>
-                  <div className="text-xs text-gray-400">{((token.value / totalValue) * 100).toFixed(1)}%</div>
+                  <div className="font-medium">
+                    ${token.usdValue ? token.usdValue.toFixed(2) : '0.00'}
+                  </div>
                 </div>
               </div>
             ))}
